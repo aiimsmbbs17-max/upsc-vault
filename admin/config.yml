@@ -11,9 +11,10 @@ collections:
       - file: "data.json"
         label: "All Resources"
         name: "resources"
+        format: "json"
         fields:
-          - label: "Items"
-            name: "items"
+          - label: "Resources"
+            name: ""
             widget: "list"
             fields:
               - { label: "Title", name: "title", widget: "string" }
