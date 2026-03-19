@@ -14,13 +14,25 @@ collections:
         file: "data.json"
         format: "json"
         fields:
-  - label: "Items"
-    name: "items"
-    widget: "list"
-    fields:
-      - { label: "ID", name: "id", widget: "string" }
-      - { label: "Title", name: "title", widget: "string" }
-      - { label: "Subject", name: "subject", widget: "string" }
-      - { label: "Type", name: "type", widget: "string" }
-      - { label: "Category", name: "category", widget: "string" }
-      - { label: "Link", name: "link", widget: "string" }
+          - label: "Items"
+            name: "items"
+            widget: "list"
+            fields:
+              - label: "ID"
+                name: "id"
+                widget: "string"
+              - label: "Title"
+                name: "title"
+                widget: "string"
+              - label: "Subject"
+                name: "subject"
+                widget: "string"
+              - label: "Type"
+                name: "type"
+                widget: "string"
+              - label: "Category"
+                name: "category"
+                widget: "string"
+              - label: "Link"
+                name: "link"
+                widget: "string"
