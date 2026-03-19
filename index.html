@@ -1581,8 +1581,8 @@
         const res = await fetch('data.json');
         const jsonData = await res.json();
 
-        // FIX: ensure required fields exist
-        cloudItems = jsonData.map(item => ({
+        // ✅ FIXED: use jsonData.items
+        cloudItems = (jsonData.items || []).map(item => ({
             institute: "General",
             year: "2025",
             ...item
