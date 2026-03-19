@@ -17,7 +17,7 @@ collections:
         format: "json"
         fields:
           - label: "Items"
-            name: ""
+            name: "items"
             widget: "list"
             fields:
               - { label: "Title", name: "title", widget: "string" }
