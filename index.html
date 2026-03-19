@@ -1,0 +1,1799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPSC Vault | Personal Repository</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <!-- Added for Tracker Feature -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #2d3a3a;
+            --accent: #8a795d;
+            --bg: #fdfdfc;
+        }
+        
+        body { 
+            scroll-behavior: smooth; 
+            background-color: var(--bg); 
+            color: #1a1a1a; 
+            font-family: 'Inter', sans-serif; 
+        }
+        
+        h1, h2, h3, .brand { font-family: 'Playfair Display', serif; }
+
+        .glass-nav {
+            background: rgba(253, 253, 252, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .hero-gradient {
+            background: radial-gradient(circle at top right, #f8f6f1 0%, transparent 70%);
+        }
+
+        .card-premium {
+            background: white;
+            border: 1px solid #eee;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .card-premium:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+            border-color: var(--accent);
+        }
+
+        /* Stronger hover for Notes in Polity Hub */
+        #polity-notes .card-premium:hover {
+            border-left-width: 8px;
+            background-color: #fcfbf9;
+        }
+
+        .tag-pill {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .filter-active {
+            background-color: var(--primary) !important;
+            color: white !important;
+            border-color: var(--primary) !important;
+        }
+
+        /* Navigation Active State */
+        .nav-link { position: relative; transition: color 0.3s ease; }
+        .nav-link.active { color: var(--accent); font-weight: 700; }
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--accent);
+            border-radius: 2px;
+        }
+
+        /* Page Transitions */
+        .page-view {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .page-view.switching {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        .hidden { display: none; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+        .modal-overlay {
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        /* Accordion Styles */
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease;
+        }
+        .accordion-item.active .accordion-content {
+            max-height: 2000px;
+            padding-bottom: 1rem;
+        }
+        .accordion-item.active .chevron-icon {
+            transform: rotate(180deg);
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 */
+            height: 0;
+            overflow: hidden;
+            border-radius: 24px;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .sticky-subnav {
+            top: 72px;
+            z-index: 40;
+            background: rgba(253, 253, 252, 0.9);
+            backdrop-filter: blur(8px);
+        }
+
+        /* Back to top button */
+        #backToTop {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 50;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #backToTop.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Tracker Custom Styles */
+        .tracker-subject-card.active {
+            border-color: var(--accent);
+            background-color: #fcfbf9;
+        }
+        .custom-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--accent);
+            border-radius: 4px;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .custom-checkbox:active { transform: scale(0.8); }
+
+        /* Nested Checklist */
+        .micro-topic-item { transition: background 0.2s ease; border-radius: 8px; }
+        .micro-topic-item:hover { background-color: rgba(0,0,0,0.02); }
+
+        /* PDF Printable Layout Hidden */
+        #pdf-template {
+            position: fixed;
+            left: -9999px;
+            top: 0;
+            width: 800px;
+            padding: 0;
+            background: white;
+            color: black;
+            font-family: 'Inter', sans-serif;
+            z-index: -100;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
+    </style>
+</head>
+<body class="hero-gradient">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 glass-nav" id="navbar">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="javascript:void(0)" onclick="showPage('homePage')" class="brand text-2xl font-bold tracking-tight text-[#2d3a3a]">UPSC <span class="text-[#8a795d]">Vault</span></a>
+            
+            <div class="hidden md:flex space-x-8 items-center text-sm font-medium">
+                <a href="javascript:void(0)" id="nav-homePage" onclick="showPage('homePage')" class="nav-link active hover:text-[#8a795d] transition">Home</a>
+                <a href="javascript:void(0)" id="nav-polityPage" onclick="showPage('polityPage')" class="nav-link hover:text-[#8a795d] transition">Polity Hub</a>
+                <a href="javascript:void(0)" id="nav-trackerPage" onclick="showPage('trackerPage')" class="nav-link px-4 py-1.5 bg-[#f8f6f1] text-[#8a795d] rounded-full hover:bg-[#8a795d] hover:text-white transition">Tracker</a>
+                <a href="#books-section" class="hover:text-[#8a795d] transition home-only">Books</a>
+                <a href="#pyq-section" class="hover:text-[#8a795d] transition home-only">PYQs</a>
+                <button onclick="toggleModal('addModal')" class="bg-[#2d3a3a] text-white px-4 py-2 rounded-full hover:bg-black transition flex items-center gap-2">
+                    <i class="fas fa-plus text-xs"></i> Add Resource
+                </button>
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="md:hidden text-2xl"><i class="fas fa-bars"></i></button>
+        </div>
+    </nav>
+
+    <!-- HOMEPAGE SECTION -->
+    <div id="homePage" class="page-view">
+        <!-- Hero Section -->
+        <section class="pt-32 pb-20 overflow-hidden">
+            <div class="container mx-auto px-6">
+                <div class="grid lg:grid-cols-2 items-center gap-16">
+                    <div data-aos="fade-right">
+                        <div class="inline-block px-3 py-1 bg-[#f8f6f1] border border-[#e0ddd5] rounded-full text-[10px] font-bold text-[#8a795d] uppercase tracking-widest mb-6">
+                            Personal Study Repository v3.2
+                        </div>
+                        <h1 class="text-5xl md:text-7xl font-bold text-[#2d3a3a] leading-[1.1] mb-6">
+                            Your Civil Services <br/> <span id="typewriter" class="text-[#8a795d]"></span>
+                        </h1>
+                        <p class="text-lg text-gray-500 max-w-lg mb-10 leading-relaxed">
+                            A centralized, secure digital library for standard books, official PYQs, and coaching test series. Organised for clarity, built for consistency.
+                        </p>
+                        
+                        <div class="relative max-w-md group">
+                            <input type="text" id="mainSearch" placeholder="Search by title, subject or institute..." 
+                                   class="w-full pl-12 pr-4 py-4 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#8a795d] focus:border-transparent transition shadow-sm group-hover:shadow-md">
+                            <i class="fas fa-search absolute left-5 top-5 text-gray-400"></i>
+                        </div>
+                        <div id="searchStatus" class="mt-3 text-xs text-gray-400 font-medium opacity-0 transition-opacity duration-300"></div>
+
+                        <!-- Navigation Quick Buttons -->
+                        <div class="flex flex-wrap gap-3 mt-6" data-aos="fade-up" data-aos-delay="100">
+                            <a href="#books-section" class="bg-[#2d3a3a] text-white px-6 py-3 rounded-xl text-xs font-bold hover:bg-black transition shadow-sm flex items-center gap-2">
+                                <i class="fas fa-book"></i> Standard Books
+                            </a>
+                            <a href="#current-affairs-section" class="bg-[#8a795d] text-white px-6 py-3 rounded-xl text-xs font-bold hover:bg-opacity-90 transition shadow-sm flex items-center gap-2">
+                                <i class="fas fa-newspaper"></i> Current Affairs
+                            </a>
+                            <a href="#pyq-section" class="bg-[#2d3a3a] text-white px-6 py-3 rounded-xl text-xs font-bold hover:bg-black transition shadow-sm flex items-center gap-2">
+                                <i class="fas fa-history"></i> PYQs
+                            </a>
+                            <a href="#test-series" class="border-2 border-[#2d3a3a] text-[#2d3a3a] px-6 py-3 rounded-xl text-xs font-bold hover:bg-[#2d3a3a] hover:text-white transition shadow-sm flex items-center gap-2">
+                                <i class="fas fa-tasks"></i> Test Series
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="relative" data-aos="zoom-in">
+                        <div class="absolute -top-10 -right-10 w-64 h-64 bg-[#f8f6f1] rounded-full filter blur-3xl opacity-50 z-0"></div>
+                        <lottie-player src="https://lottie.host/3f30ae93-47f4-4fe1-a7c2-855b5b6bab86/7FyzpCELte.json" 
+                                       background="transparent" speed="1" class="relative z-10 w-full max-w-lg mx-auto" loop autoplay></lottie-player>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats & Quick Actions -->
+        <section class="pb-20">
+            <div class="container mx-auto px-6">
+                <div class="flex flex-wrap gap-4 justify-center" id="subjectFilters">
+                    <!-- Subjects generated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-6 pb-32">
+            
+            <!-- Section: Books -->
+            <section id="books-section" class="mb-24 scroll-mt-24">
+                <div class="flex items-end justify-between mb-10">
+                    <div>
+                        <h2 class="text-3xl font-bold text-[#2d3a3a]">Standard Books & Notes</h2>
+                        <p class="text-gray-400 text-sm mt-1">Core reference materials, NCERTs, and notes</p>
+                    </div>
+                    <div class="h-[1px] bg-gray-100 flex-grow mx-8 mb-3"></div>
+                </div>
+                <div id="booksGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 min-h-[100px]"></div>
+            </section>
+
+            <!-- Section: Current Affairs -->
+            <section id="current-affairs-section" class="mb-24 scroll-mt-24">
+                <div class="flex items-end justify-between mb-10">
+                    <div>
+                        <h2 class="text-3xl font-bold text-[#2d3a3a]">Current Affairs</h2>
+                        <p class="text-gray-400 text-sm mt-1">Monthly magazines, compilations, and daily updates</p>
+                    </div>
+                    <div class="h-[1px] bg-gray-100 flex-grow mx-8 mb-3"></div>
+                </div>
+                <div id="currentAffairsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+            </section>
+
+            <!-- Section: PYQs -->
+            <section id="pyq-section" class="mb-24 scroll-mt-24">
+                <div class="flex items-end justify-between mb-10">
+                    <div>
+                        <h2 class="text-3xl font-bold text-[#2d3a3a]">UPSC PYQs</h2>
+                        <p class="text-gray-400 text-sm mt-1">Structured repository of Prelims and Mains papers</p>
+                    </div>
+                    <div class="h-[1px] bg-gray-100 flex-grow mx-8 mb-3"></div>
+                </div>
+                
+                <div class="max-w-4xl mx-auto space-y-4" id="pyqAccordionContainer">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+
+            <!-- Section: Test Series -->
+            <section id="test-series" class="mb-24 scroll-mt-24">
+                <div class="flex items-end justify-between mb-8">
+                    <div>
+                        <h2 class="text-3xl font-bold text-[#2d3a3a]">Coaching Tests</h2>
+                        <p class="text-gray-400 text-sm mt-1">Simulated mocks and sectional tests</p>
+                    </div>
+                    <div class="h-[1px] bg-gray-100 flex-grow mx-8 mb-3"></div>
+                </div>
+                <div class="flex flex-wrap gap-2 mb-10" id="instituteFilters"></div>
+                <div id="testGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+            </section>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden flex flex-col items-center justify-center py-20 text-center">
+                <div class="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-box-open text-3xl text-gray-300"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-700">No resources found</h3>
+                <p class="text-gray-400 mt-2">Try adjusting your filters or search terms.</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- POLITY HUB SECTION -->
+    <div id="polityPage" class="page-view hidden">
+        <!-- Hero Section -->
+        <section class="pt-32 pb-12">
+            <div class="container mx-auto px-6">
+                <div class="flex items-center gap-3 mb-6" data-aos="fade-right">
+                    <button onclick="showPage('homePage')" class="text-sm font-bold text-[#8a795d] hover:text-[#2d3a3a] transition flex items-center gap-2 group">
+                        <i class="fas fa-arrow-left group-hover:-translate-x-1 transition-transform"></i> Back to Home
+                    </button>
+                </div>
+                <div class="grid lg:grid-cols-2 items-center gap-12">
+                    <div data-aos="fade-right">
+                        <div class="inline-block px-3 py-1 bg-green-50 border border-green-100 rounded-full text-[10px] font-bold text-green-600 uppercase tracking-widest mb-6">
+                            Subject Specific Dashboard
+                        </div>
+                        <h1 class="text-5xl md:text-7xl font-bold text-[#2d3a3a] leading-[1.1] mb-6">
+                            Polity <span class="text-[#8a795d]">Hub</span>
+                        </h1>
+                        <p class="text-lg text-gray-500 max-w-lg leading-relaxed">
+                            Strategy, Books, Notes & PYQs — all in one place. Master the Indian Constitution and Governance with curated pathways.
+                        </p>
+                    </div>
+                    <div class="hidden lg:block" data-aos="zoom-in">
+                        <lottie-player src="https://lottie.host/8044709c-3642-47f6-9311-58074900a35e/vG1SgL57Yx.json" 
+                                       background="transparent" speed="1" style="width: 100%; height: 350px;" class="max-w-md mx-auto" loop autoplay></lottie-player>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Navigation Sticky Bar -->
+        <div class="sticky sticky-subnav border-y border-gray-100 py-4 mb-12">
+            <div class="container mx-auto px-6">
+                <div class="flex flex-wrap gap-4 md:gap-8 justify-center items-center">
+                    <a href="#polity-strategy" class="text-xs font-bold uppercase tracking-widest hover:text-[#8a795d] transition">Strategy</a>
+                    <a href="#polity-books" class="text-xs font-bold uppercase tracking-widest hover:text-[#8a795d] transition">Books</a>
+                    <a href="#polity-notes" class="text-xs font-bold uppercase tracking-widest hover:text-[#8a795d] transition">Notes</a>
+                    <a href="#polity-pyqs" class="text-xs font-bold uppercase tracking-widest hover:text-[#8a795d] transition">PYQs</a>
+                    <a href="#polity-tests" class="text-xs font-bold uppercase tracking-widest hover:text-[#8a795d] transition">Tests</a>
+                </div>
+            </div>
+        </div>
+
+        <main class="container mx-auto px-6 pb-32">
+            <!-- Strategy Section -->
+            <section id="polity-strategy" class="mb-24 scroll-mt-32" data-aos="fade-up">
+                <div class="mb-10 text-center max-w-2xl mx-auto">
+                    <div class="inline-block px-2 py-0.5 bg-[#8a795d] text-white text-[10px] font-bold rounded mb-2">START HERE</div>
+                    <h2 class="text-3xl font-bold text-[#2d3a3a] mb-2">Strategy & Learning Path</h2>
+                    <p class="text-gray-400 text-sm">How to approach Indian Polity for Prelims and Mains</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="space-y-4">
+                        <div class="video-container shadow-xl">
+                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Polity Strategy" allowfullscreen></iframe>
+                        </div>
+                        <div class="px-2">
+                            <h3 class="font-bold text-[#2d3a3a]">Polity Strategy by Toppers</h3>
+                            <p class="text-xs text-gray-400 mt-1">A comprehensive guide on what to read and what to skip in Laxmikanth.</p>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="video-container shadow-xl">
+                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Polity Crash Course" allowfullscreen></iframe>
+                        </div>
+                        <div class="px-2">
+                            <h3 class="font-bold text-[#2d3a3a]">Polity Rapid Revision</h3>
+                            <p class="text-xs text-gray-400 mt-1">Quick summary of Constitutional Framework and Central Government.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Standard Books -->
+            <section id="polity-books" class="mb-24 scroll-mt-32">
+                <div class="flex items-end justify-between mb-10">
+                    <div>
+                        <h2 class="text-3xl font-bold text-[#2d3a3a]">Standard Books</h2>
+                        <p class="text-gray-400 text-sm mt-1">The "Bible" and core NCERT foundations</p>
+                    </div>
+                    <div class="h-[1px] bg-gray-100 flex-grow mx-8 mb-3"></div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Cards -->
+                    <div class="card-premium p-6 rounded-2xl" data-aos="fade-up">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="tag-pill bg-green-50 text-green-600">Standard Book</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-[#2d3a3a] mb-2 leading-snug">Indian Polity - M. Laxmikanth</h3>
+                        <p class="text-[11px] text-gray-400 mb-6 font-medium">Source: 7th Latest Edition</p>
+                        <a href="#" class="w-full inline-flex items-center justify-center gap-2 py-3 bg-gray-50 text-[#2d3a3a] text-sm font-bold rounded-xl hover:bg-[#8a795d] hover:text-white transition">Access Book</a>
+                    </div>
+                    <div class="card-premium p-6 rounded-2xl" data-aos="fade-up" data-aos-delay="100">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="tag-pill bg-blue-50 text-blue-600">NCERT</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-[#2d3a3a] mb-2 leading-snug">Polity NCERTs (9-12)</h3>
+                        <p class="text-[11px] text-gray-400 mb-6 font-medium">Source: NCERT Official</p>
+                        <a href="#" class="w-full inline-flex items-center justify-center gap-2 py-3 bg-gray-50 text-[#2d3a3a] text-sm font-bold rounded-xl hover:bg-[#8a795d] hover:text-white transition">Download Folder</a>
+                    </div>
+                    <div class="card-premium p-6 rounded-2xl" data-aos="fade-up" data-aos-delay="200">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="tag-pill bg-purple-50 text-purple-600">Advanced</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-[#2d3a3a] mb-2 leading-snug">Bare Act Summary</h3>
+                        <p class="text-[11px] text-gray-400 mb-6 font-medium">Source: Constitutional Text</p>
+                        <a href="#" class="w-full inline-flex items-center justify-center gap-2 py-3 bg-gray-50 text-[#2d3a3a] text-sm font-bold rounded-xl hover:bg-[#8a795d] hover:text-white transition">View Summary</a>
+                    </div>
+                    <div class="card-premium p-6 rounded-2xl" data-aos="fade-up" data-aos-delay="300">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="tag-pill bg-orange-50 text-orange-600">Quick Fix</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-[#2d3a3a] mb-2 leading-snug">Important Articles List</h3>
+                        <p class="text-[11px] text-gray-400 mb-6 font-medium">Source: Curated List</p>
+                        <a href="#" class="w-full inline-flex items-center justify-center gap-2 py-3 bg-gray-50 text-[#2d3a3a] text-sm font-bold rounded-xl hover:bg-[#8a795d] hover:text-white transition">Access PDF</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Subject Notes -->
+            <section id="polity-notes" class="mb-24 scroll-mt-32">
+                <div class="flex items-end justify-between mb-10">
+                    <h2 class="text-3xl font-bold text-[#2d3a3a]">Thematic Notes</h2>
+                    <div class="h-[1px] bg-gray-100 flex-grow mx-8 mb-3"></div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="card-premium p-5 rounded-2xl border-l-4 border-l-[#8a795d]" data-aos="fade-right">
+                        <h4 class="text-sm font-bold text-[#2d3a3a] mb-1">Fundamental Rights</h4>
+                        <p class="text-[10px] text-gray-400 mb-4">Part III Comprehensive Notes</p>
+                        <a href="#" class="text-[10px] font-bold text-[#8a795d] flex items-center gap-2 hover:gap-3 transition-all">READ NOTES <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="card-premium p-5 rounded-2xl border-l-4 border-l-[#8a795d]" data-aos="fade-right" data-aos-delay="100">
+                        <h4 class="text-sm font-bold text-[#2d3a3a] mb-1">DPSP & Duties</h4>
+                        <p class="text-[10px] text-gray-400 mb-4">Classification & Amendments</p>
+                        <a href="#" class="text-[10px] font-bold text-[#8a795d] flex items-center gap-2 hover:gap-3 transition-all">READ NOTES <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="card-premium p-5 rounded-2xl border-l-4 border-l-[#8a795d]" data-aos="fade-right" data-aos-delay="200">
+                        <h4 class="text-sm font-bold text-[#2d3a3a] mb-1">Parliamentary System</h4>
+                        <p class="text-[10px] text-gray-400 mb-4">Speaker, Panels & Sessions</p>
+                        <a href="#" class="text-[10px] font-bold text-[#8a795d] flex items-center gap-2 hover:gap-3 transition-all">READ NOTES <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="card-premium p-5 rounded-2xl border-l-4 border-l-[#8a795d]" data-aos="fade-right" data-aos-delay="300">
+                        <h4 class="text-sm font-bold text-[#2d3a3a] mb-1">Constitutional Bodies</h4>
+                        <p class="text-[10px] text-gray-400 mb-4">ECI, UPSC, CAG Summary</p>
+                        <a href="#" class="text-[10px] font-bold text-[#8a795d] flex items-center gap-2 hover:gap-3 transition-all">READ NOTES <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PYQ Analysis -->
+            <section id="polity-pyqs" class="mb-24 scroll-mt-32">
+                <div class="bg-[#2d3a3a] rounded-[40px] p-10 md:p-16 text-white overflow-hidden relative" data-aos="zoom-in">
+                    <div class="relative z-10 grid lg:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <h2 class="text-4xl font-bold mb-2">Polity PYQs Analysis</h2>
+                            <p class="text-[10px] font-bold tracking-[0.2em] text-[#8a795d] mb-6 uppercase">Most important section for UPSC</p>
+                            <p class="text-gray-300 mb-8 leading-relaxed">Access 10 years of subject-wise trend analysis. Understand which articles and themes are repeated most by UPSC.</p>
+                            <div class="space-y-3">
+                                <a href="#" class="flex items-center justify-between p-4 bg-white/10 hover:bg-white/20 rounded-2xl transition group">
+                                    <span class="font-medium text-sm">Topic-wise Prelims (2013-2023)</span>
+                                    <i class="fas fa-download text-xs opacity-50 group-hover:opacity-100"></i>
+                                </a>
+                                <a href="#" class="flex items-center justify-between p-4 bg-white/10 hover:bg-white/20 rounded-2xl transition group">
+                                    <span class="font-medium text-sm">Mains GS2 Polity Compilation</span>
+                                    <i class="fas fa-download text-xs opacity-50 group-hover:opacity-100"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <!-- Scale of Justice / Supreme Court Animation -->
+                        <div class="hidden lg:flex justify-center">
+                            <div class="w-72 h-72 border-4 border-[#8a795d]/30 rounded-full flex items-center justify-center relative">
+                                <lottie-player src="https://lottie.host/7e0b5f16-f33b-4876-9d33-9f15951d1f05/u3q8YhEayU.json" 
+                                               background="transparent" speed="0.8" style="width: 250px; height: 250px;" loop autoplay></lottie-player>
+                                <div class="absolute inset-0 border-2 border-dashed border-[#8a795d]/20 rounded-full animate-[spin_20s_linear_infinite]"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute top-0 right-0 w-96 h-96 bg-[#8a795d] opacity-10 rounded-full -mr-20 -mt-20"></div>
+                </div>
+            </section>
+
+            <!-- Mock Tests -->
+            <section id="polity-tests" class="mb-24 scroll-mt-32">
+                <div class="flex items-end justify-between mb-10">
+                    <h2 class="text-3xl font-bold text-[#2d3a3a]">Sectional Mock Tests</h2>
+                    <div class="h-[1px] bg-gray-100 flex-grow mx-8 mb-3"></div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="card-premium p-6 rounded-2xl" data-aos="fade-up">
+                        <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center mb-6 text-[#2d3a3a]"><i class="fas fa-vial"></i></div>
+                        <h3 class="font-bold mb-2">Vision IAS Polity Test 1</h3>
+                        <p class="text-[11px] text-gray-400 mb-6">Constitutional Framework & FR</p>
+                        <a href="#" class="text-xs font-bold text-[#8a795d] hover:underline">Download Test & Key</a>
+                    </div>
+                    <div class="card-premium p-6 rounded-2xl" data-aos="fade-up" data-aos-delay="100">
+                        <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center mb-6 text-[#2d3a3a]"><i class="fas fa-vial"></i></div>
+                        <h3 class="font-bold mb-2">Vajiram Sectional Polity</h3>
+                        <p class="text-[11px] text-gray-400 mb-6">Executive & Legislature Focus</p>
+                        <a href="#" class="text-xs font-bold text-[#8a795d] hover:underline">Download Test & Key</a>
+                    </div>
+                    <div class="card-premium p-6 rounded-2xl" data-aos="fade-up" data-aos-delay="200">
+                        <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center mb-6 text-[#2d3a3a]"><i class="fas fa-vial"></i></div>
+                        <h3 class="font-bold mb-2">Forum IAS Simulator</h3>
+                        <p class="text-[11px] text-gray-400 mb-6">Full Syllabus Polity Mock</p>
+                        <a href="#" class="text-xs font-bold text-[#8a795d] hover:underline">Download Test & Key</a>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- UPSC PROGRESS TRACKER SECTION -->
+    <div id="trackerPage" class="page-view hidden">
+        <section class="pt-32 pb-12">
+            <div class="container mx-auto px-6">
+                <div class="flex items-center gap-3 mb-6" data-aos="fade-right">
+                    <button onclick="showPage('homePage')" class="text-sm font-bold text-[#8a795d] hover:text-[#2d3a3a] transition flex items-center gap-2 group">
+                        <i class="fas fa-arrow-left group-hover:-translate-x-1 transition-transform"></i> Back to Home
+                    </button>
+                </div>
+
+                <div class="flex flex-col lg:flex-row justify-between items-start gap-8 mb-12" data-aos="fade-right">
+                    <div class="max-w-2xl">
+                        <h1 class="text-5xl md:text-6xl font-bold text-[#2d3a3a] mb-4">UPSC Progress <span class="text-[#8a795d]">Tracker</span></h1>
+                        <p class="text-lg text-gray-500">Dual-mode preparation dashboard. Integrated with official syllabus and detailed micro-topic tracking.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm w-full lg:w-80">
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Candidate Name</label>
+                        <input type="text" id="userNameInput" placeholder="Enter Your Name" oninput="saveUserName(this.value)" class="w-full bg-gray-50 px-4 py-3 rounded-xl focus:ring-2 focus:ring-[#8a795d] outline-none text-sm font-medium">
+                        <div class="mt-4 flex gap-2">
+                           <button onclick="confirmResetTracker()" class="text-[10px] font-bold text-red-400 hover:text-red-600 uppercase tracking-widest">Reset All Data</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TRACKER HIERARCHY LEVEL 1 (BIGGEST) -->
+                <div class="mb-10">
+                    <div class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-4 ml-1">Level 1: Main Tracker Selection</div>
+                    <div class="flex flex-wrap gap-6">
+                        <button onclick="setTrackerMainMode('prelims')" id="mode-prelims" class="px-10 py-5 rounded-3xl border-2 transition font-bold text-xl shadow-lg">
+                            <i class="fas fa-graduation-cap mr-2"></i> Prelims Tracker
+                        </button>
+                        <button onclick="setTrackerMainMode('mains')" id="mode-mains" class="px-10 py-5 rounded-3xl border-2 transition font-bold text-xl shadow-lg">
+                            <i class="fas fa-pen-fancy mr-2"></i> Mains Tracker
+                        </button>
+                    </div>
+                </div>
+
+                <!-- TRACKER HIERARCHY LEVEL 2 (MEDIUM) -->
+                <div class="mb-10" id="modeSubToggles">
+                    <div class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-4 ml-1">Level 2: Syllabus Depth Mode</div>
+                    <div class="flex flex-wrap gap-4">
+                        <button onclick="setTrackerType('standard')" id="type-standard" class="px-8 py-3 rounded-2xl border-2 font-bold transition">
+                            UPSC Syllabus Mode
+                        </button>
+                        <button onclick="setTrackerType('micro')" id="type-micro" class="px-8 py-3 rounded-2xl border-2 font-bold transition">
+                            Micro-Syllabus Mode
+                        </button>
+                    </div>
+                </div>
+
+                <!-- TRACKER HIERARCHY LEVEL 3 (SMALLEST) -->
+                <div id="prelimsTrackerContent">
+                    <div class="mb-8">
+                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-4 ml-1">Level 3: Analytics & Views</div>
+                        <div class="flex flex-wrap gap-3 bg-gray-50 p-1.5 rounded-2xl inline-flex">
+                            <button onclick="setTrackerView('subject')" id="view-subject" class="px-5 py-2 rounded-xl text-xs font-bold transition">Subject-wise Tracker</button>
+                            <button onclick="setTrackerView('summary')" id="view-summary" class="px-5 py-2 rounded-xl text-xs font-bold transition">Subject Progress Summary</button>
+                            <button onclick="setTrackerView('overall')" id="view-overall" class="px-5 py-2 rounded-xl text-xs font-bold transition">Overall Statistics</button>
+                        </div>
+                    </div>
+
+                    <!-- Subject-wise Tracker View -->
+                    <div id="tracker-view-subject" class="grid lg:grid-cols-4 gap-8">
+                        <div class="lg:col-span-1 space-y-3">
+                            <div class="mb-2 px-1 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Select Subject</div>
+                            <div id="trackerSubjectList" class="space-y-3">
+                                <!-- Subjects populated by JS -->
+                            </div>
+
+                            <div class="mt-8">
+                                <div class="px-1 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Recent Progress</div>
+                                <div id="recentActivityList" class="space-y-2">
+                                    <!-- Recent progress populated by JS -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lg:col-span-3">
+                            <div class="card-premium p-8 rounded-3xl" id="subjectDetailView">
+                                <div class="flex justify-between items-start mb-8">
+                                    <div>
+                                        <div id="motivationBadge" class="inline-block px-2 py-0.5 bg-gray-100 text-[9px] font-bold rounded mb-2">LOADING...</div>
+                                        <h2 id="activeSubjectTitle" class="text-3xl font-bold text-[#2d3a3a]">Select a Subject</h2>
+                                        <p id="modeDescription" class="text-sm text-gray-400 mt-1">Syllabus checkpoints</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <div id="subjectPercentage" class="text-4xl font-bold text-[#8a795d]">0%</div>
+                                        <div class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mt-1">Completion</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid md:grid-cols-2 gap-12">
+                                    <div class="space-y-3">
+                                        <div id="topicChecklist" class="space-y-3 max-h-[600px] overflow-y-auto pr-4 custom-scrollbar">
+                                            <!-- Topics populated by JS -->
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col items-center justify-start border-l border-gray-50 pl-8">
+                                        <div class="w-full max-w-[220px]">
+                                            <canvas id="subjectDoughnut"></canvas>
+                                        </div>
+                                        <div class="mt-8 w-full">
+                                            <div class="flex justify-between text-xs font-bold mb-2">
+                                                <span>Linear Progress</span>
+                                                <span id="progressBarText">0/0 Topics</span>
+                                            </div>
+                                            <div class="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                                                <div id="subjectProgressBar" class="h-full bg-[#8a795d] transition-all duration-700 progress-bar-glow" style="width: 0%"></div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="w-full mt-10 p-4 bg-[#f8f6f1] rounded-2xl">
+                                            <div class="text-[10px] font-bold text-[#8a795d] uppercase mb-2">Personal Insight</div>
+                                            <p id="subjectSmartNote" class="text-xs text-gray-500 leading-relaxed italic">Select topics to see your progress analysis.</p>
+                                        </div>
+
+                                        <div class="mt-auto pt-10 w-full flex flex-col gap-3">
+                                            <button onclick="downloadFullReport()" id="pdfBtn" class="w-full py-4 bg-[#2d3a3a] text-white rounded-2xl font-bold hover:bg-black transition flex items-center justify-center gap-2">
+                                                <i class="fas fa-file-pdf"></i> Download Full Progress Report
+                                            </button>
+                                            <button onclick="confirmResetSubject()" class="w-full py-2 text-xs font-bold text-gray-400 hover:text-red-500 transition">Reset Subject Progress</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary View -->
+                    <div id="tracker-view-summary" class="hidden grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <!-- Summary cards generated by JS -->
+                    </div>
+
+                    <!-- Overall View -->
+                    <div id="tracker-view-overall" class="hidden">
+                        <div class="card-premium p-10 rounded-[40px] bg-white border-2 border-[#f8f6f1]">
+                            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                                <div>
+                                    <h3 class="text-4xl font-bold text-[#2d3a3a] mb-6">Preparation Intelligence</h3>
+                                    <div class="grid grid-cols-2 gap-6 mb-10">
+                                        <div class="bg-[#f8f6f1] p-6 rounded-3xl">
+                                            <div class="text-[10px] font-bold text-[#8a795d] uppercase tracking-widest mb-1">Total Units</div>
+                                            <div id="overallTotalTopics" class="text-3xl font-bold text-[#2d3a3a]">0</div>
+                                        </div>
+                                        <div class="bg-green-50 p-6 rounded-3xl">
+                                            <div class="text-[10px] font-bold text-green-600 uppercase tracking-widest mb-1">Mastered</div>
+                                            <div id="overallCompletedTopics" class="text-3xl font-bold text-[#2d3a3a]">0</div>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-400 leading-relaxed mb-8">This meta-analysis covers the entire UPSC landscape. High completion rates in core subjects correlate with Prelims clearing probability.</p>
+                                    <div class="p-6 bg-[#2d3a3a] text-white rounded-3xl flex items-center justify-between">
+                                        <div>
+                                            <div class="text-[10px] font-bold opacity-60 uppercase tracking-widest mb-1">Aggregate Efficiency</div>
+                                            <div id="overallAvgPercent" class="text-4xl font-bold text-[#8a795d]">0%</div>
+                                        </div>
+                                        <div class="w-16 h-16 border-4 border-[#8a795d] rounded-full flex items-center justify-center">
+                                            <i class="fas fa-chart-line text-xl text-[#8a795d]"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex justify-center">
+                                    <div class="w-full max-w-[400px]">
+                                        <canvas id="overallDoughnut"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Hidden Template for PDF Rendering -->
+    <div id="pdf-template"></div>
+
+    <!-- Floating Back to Top -->
+    <button id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="w-12 h-12 rounded-full bg-[#2d3a3a] text-white flex items-center justify-center shadow-2xl hover:bg-black transition-colors">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Footer -->
+    <footer class="bg-[#2d3a3a] py-16 text-white overflow-hidden relative">
+        <div class="container mx-auto px-6 relative z-10 text-center">
+            <h2 class="brand text-3xl mb-4">UPSC Vault</h2>
+            <p class="text-gray-400 max-w-md mx-auto mb-10 leading-relaxed">
+                A simple tool to keep your preparation organized and your focus sharp. Stay consistent, stay focused.
+            </p>
+            <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Built for aspirants by aspirants • 2024</p>
+        </div>
+    </footer>
+
+    <!-- Add Resource Modal -->
+    <div id="addModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4 modal-overlay">
+        <div class="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden">
+            <div class="p-8 border-b flex justify-between items-center">
+                <h3 class="text-xl font-bold text-[#2d3a3a]">New Resource</h3>
+                <button onclick="toggleModal('addModal')" class="text-gray-400 hover:text-black"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="resourceForm" class="p-8 space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="col-span-2">
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Resource Title</label>
+                        <input type="text" name="title" required placeholder="e.g. Laxmikanth Polity 7th Ed" class="w-full px-4 py-3 bg-gray-50 border rounded-xl focus:ring-2 focus:ring-[#8a795d] outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Subject</label>
+                        <select name="subject" class="w-full px-4 py-3 bg-gray-50 border rounded-xl focus:ring-2 focus:ring-[#8a795d] outline-none">
+                            <option>Polity</option>
+                            <option>Economy</option>
+                            <option>Geography</option>
+                            <option>History</option>
+                            <option>Environment</option>
+                            <option>Science</option>
+                            <option>Security</option>
+                            <option>Ethics</option>
+                            <option>CSAT</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Category</label>
+                        <select name="category" class="w-full px-4 py-3 bg-gray-50 border rounded-xl focus:ring-2 focus:ring-[#8a795d] outline-none">
+                            <option value="Book">Standard Book</option>
+                            <option value="Current">Current Affairs</option>
+                            <option value="PYQ">UPSC PYQ</option>
+                            <option value="Test">Coaching Test</option>
+                        </select>
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Source / Institute</label>
+                        <input type="text" name="source" required placeholder="Vision IAS, Laxmikanth, etc." class="w-full px-4 py-3 bg-gray-50 border rounded-xl focus:ring-2 focus:ring-[#8a795d] outline-none transition">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Resource Link (URL)</label>
+                        <input type="url" name="link" required placeholder="https://drive.google.com/..." class="w-full px-4 py-3 bg-gray-50 border rounded-xl focus:ring-2 focus:ring-[#8a795d] outline-none transition">
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-[#2d3a3a] text-white py-4 rounded-2xl font-bold mt-6 hover:bg-black transition shadow-lg shadow-gray-200">
+                    Add to Repository
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-[100] bg-[#2d3a3a] text-white px-6 py-3 rounded-full shadow-2xl transition-all translate-y-20 opacity-0 pointer-events-none flex items-center gap-3">
+        <i class="fas fa-check-circle text-green-400"></i>
+        <span id="toastMsg">Action successful</span>
+    </div>
+
+    <script>
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'upsc-vault-v3';
+        let homeScrollPos = 0;
+        let activePageId = 'homePage';
+        
+        // Navigation Handler
+        window.showPage = (pageId) => {
+            if (activePageId === pageId) return;
+            const currentPage = document.getElementById(activePageId);
+            const nextPage = document.getElementById(pageId);
+            if (activePageId === 'homePage') homeScrollPos = window.scrollY;
+            currentPage.classList.add('switching');
+            setTimeout(() => {
+                currentPage.classList.add('hidden');
+                currentPage.classList.remove('switching');
+                nextPage.classList.remove('hidden');
+                nextPage.classList.add('switching');
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.toggle('active', link.id === `nav-${pageId}`);
+                });
+                document.querySelectorAll('.home-only').forEach(el => {
+                    el.style.display = pageId === 'homePage' ? 'inline-block' : 'none';
+                });
+                void nextPage.offsetWidth;
+                nextPage.classList.remove('switching');
+                if (pageId === 'homePage') window.scrollTo({ top: homeScrollPos, behavior: 'instant' });
+                else window.scrollTo({ top: 0, behavior: 'instant' });
+                nextPage.querySelectorAll('lottie-player').forEach(player => { if (player.play) player.play(); });
+                activePageId = pageId;
+                setTimeout(() => { AOS.refresh(); }, 100);
+                if (pageId === 'trackerPage') initTracker();
+            }, 400);
+        };
+
+        const demoData = [
+            { id: 'demo-1', title: "Indian Polity - M. Laxmikanth (7th Ed)", subject: "Polity", category: "Book", source: "M. Laxmikanth", type: "Standard Book", link: "#", isDemo: true },
+            { id: 'demo-2', title: "Indian Economy - Ramesh Singh", subject: "Economy", category: "Book", source: "Ramesh Singh", type: "Standard Book", link: "#", isDemo: true },
+            { id: 'demo-3', title: "Spectrum Modern History", subject: "History", category: "Book", source: "Rajiv Ahir", type: "Standard Book", link: "#", isDemo: true },
+            { id: 'demo-4', title: "GC Leong Physical Geography", subject: "Geography", category: "Book", source: "Oxford", type: "Standard Book", link: "#", isDemo: true },
+            { id: 'demo-5', title: "Environment - Shankar IAS", subject: "Environment", category: "Book", source: "Shankar IAS", type: "Standard Book", link: "#", isDemo: true },
+            { id: 'demo-6', title: "Ancient India - RS Sharma", subject: "History", category: "Book", source: "Oxford", type: "Standard Book", link: "#", isDemo: true },
+            { id: 'demo-7', title: "Medieval India - Satish Chandra", subject: "History", category: "Book", source: "Orient Blackswan", type: "Standard Book", link: "#", isDemo: true },
+            { id: 'demo-8', title: "Art & Culture - Nitin Singhania", subject: "History", category: "Book", source: "Nitin Singhania", type: "Standard Book", link: "#", isDemo: true },
+            { id: 'demo-9', title: "Ethics, Integrity & Aptitude", subject: "Ethics", category: "Book", source: "Subbarao/Lexicon", type: "Standard Book", link: "#", isDemo: true },
+            { id: 'demo-10', title: "Internal Security - Ashok Kumar", subject: "Security", category: "Book", source: "Ashok Kumar", type: "Standard Book", link: "#", isDemo: true },
+            { id: 'demo-11', title: "Macroeconomics Class 12", subject: "Economy", category: "Book", source: "NCERT", type: "NCERT", link: "#", isDemo: true },
+            { id: 'demo-12', title: "Modern History Notes", subject: "History", category: "Notes", source: "Self Study", type: "Handwritten", link: "#", isDemo: true },
+            { id: 'demo-13', title: "Environment Notes", subject: "Environment", category: "Notes", source: "Next IAS", type: "PDF", link: "#", isDemo: true },
+            { id: 'ca-1', title: "Vision IAS Monthly - January 2024", subject: "All", category: "Current", source: "Vision IAS", type: "Magazine", link: "#", isDemo: true },
+            { id: 'ca-2', title: "PT 365 - Polity 2024", subject: "Polity", category: "Current", source: "Vision IAS", type: "Compilation", link: "#", isDemo: true },
+            { id: 'ca-3', title: "Daily Current Affairs - March 15", subject: "All", category: "Current", source: "Next IAS", type: "Daily PDF", link: "#", isDemo: true },
+            { id: 'pyq-23', title: "UPSC Prelims 2023 GS Paper 1", subject: "All", category: "PYQ", source: "UPSC", type: "Official PYQ", link: "#", isDemo: true },
+            { id: 'pyq-22', title: "UPSC Prelims 2022 GS Paper 1", subject: "All", category: "PYQ", source: "UPSC", type: "Official PYQ", link: "#", isDemo: true },
+            { id: 'pyq-21', title: "UPSC Prelims 2021 GS Paper 1", subject: "All", category: "PYQ", source: "UPSC", type: "Official PYQ", link: "#", isDemo: true },
+            { id: 'pyq-c23', title: "CSAT Prelims 2023 Paper", subject: "CSAT", category: "PYQ", source: "UPSC", type: "Official PYQ", link: "#", isDemo: true },
+            { id: 'pyq-tw-pol', title: "Polity PYQs Topic-wise Compilation", subject: "Polity", category: "PYQ", source: "Archive", type: "Thematic PYQ", link: "#", isDemo: true },
+            { id: 'pyq-tw-eco', title: "Economy PYQs 10 Year Analysis", subject: "Economy", category: "PYQ", source: "Archive", type: "Thematic PYQ", link: "#", isDemo: true },
+            { id: 'pyq-tw-geo', title: "Geography PYQs 10 Years", subject: "Geography", category: "PYQ", source: "Archive", type: "Thematic PYQ", link: "#", isDemo: true },
+            { id: 'pyq-tw-env', title: "Environment PYQs 10 Years", subject: "Environment", category: "PYQ", source: "Archive", type: "Thematic PYQ", link: "#", isDemo: true },
+            { id: 'pyq-m1', title: "Mains GS1 Compiled PYQs", subject: "GS1", category: "PYQ", source: "Archive", type: "Mains Comp", link: "#", isDemo: true },
+            { id: 'pyq-m2', title: "Mains GS2 Compiled PYQs", subject: "GS2", category: "PYQ", source: "Archive", type: "Mains Comp", link: "#", isDemo: true },
+            { id: 'test-v1', title: "Vision IAS Abhyaas Test 1 (Full)", subject: "All", category: "Test", source: "Vision IAS", type: "Full Length", link: "#", isDemo: true },
+            { id: 'test-v2', title: "Vision IAS Abhyaas Test 2 (Full)", subject: "All", category: "Test", source: "Vision IAS", type: "Full Length", link: "#", isDemo: true },
+            { id: 'test-vaj3', title: "Vajiram Full Length Test 3", subject: "All", category: "Test", source: "Vajiram", type: "Full Length", link: "#", isDemo: true },
+            { id: 'test-vaj-eco', title: "Vajiram Sectional Test Economy", subject: "Economy", category: "Test", source: "Vajiram", type: "Sectional", link: "#", isDemo: true },
+            { id: 'test-f1', title: "Forum IAS Simulator Test 1", subject: "All", category: "Test", source: "Forum IAS", type: "Full Length", link: "#", isDemo: true },
+            { id: 'test-f2', title: "Forum IAS Simulator Test 2", subject: "All", category: "Test", source: "Forum IAS", type: "Full Length", link: "#", isDemo: true },
+            { id: 'test-next-geo', title: "Next IAS Sectional Test - Geography", subject: "Geography", category: "Test", source: "Next IAS", type: "Sectional", link: "#", isDemo: true },
+            { id: 'test-ins-eth', title: "Insights IAS Secure Test - Ethics", subject: "Ethics", category: "Test", source: "Insight IAS", type: "Sectional", link: "#", isDemo: true }
+        ];
+
+        let allItems = [...demoData];
+        let filteredItems = [];
+        let currentSubject = 'All';
+        let currentInstitute = 'All';
+        let searchTerm = '';
+
+        const subjects = ["All", "Polity", "Economy", "Geography", "History", "Environment", "Science", "Security", "Ethics", "CSAT"];
+        const commonInstitutes = ["All", "Vision IAS", "Forum IAS", "Vajiram", "Next IAS", "Insight IAS", "Drishti IAS"];
+
+        // ================= TRACKER SYLLABUS DATA =================
+
+        const STANDARD_SYLLABUS = {
+            "POLITY": ["Historical Background", "Making of Constitution", "Salient Features", "Preamble", "Citizenship", "Fundamental Rights", "DPSP", "Fundamental Duties", "Union Executive", "Parliament", "Judiciary", "Federal System", "Emergency Provisions", "Constitutional Bodies", "Non-Constitutional Bodies", "Local Government", "Governance & Policies"],
+            "HISTORY": ["Ancient India", "Medieval India", "Modern India", "Freedom Struggle", "Post Independence", "Art & Culture"],
+            "GEOGRAPHY": ["Physical Geography", "Indian Geography", "World Geography", "Environment Geography"],
+            "ECONOMY": ["Basic Concepts", "National Income", "Inflation", "Banking", "Monetary Policy", "Fiscal Policy", "Budget", "External Sector", "Agriculture", "Industry", "Infrastructure", "Economic Reforms"],
+            "ENVIRONMENT": ["Ecology", "Ecosystem", "Biodiversity", "Climate Change", "Pollution", "Conservation", "Environmental Conventions"],
+            "SCIENCE": ["Physics Basics", "Chemistry Basics", "Biology Basics", "Space Tech", "Defence Tech", "Biotechnology", "IT & AI"],
+            "CURRENT AFFAIRS": ["Polity CA", "Economy CA", "Geography CA", "Environment CA", "Science CA", "Government Schemes", "Reports & Indices", "International Relations"]
+        };
+
+        const MICRO_SYLLABUS = {
+            "POLITY": {
+                "Syllabus": [
+                    "Historical Background", "Making of Constitution", "Salient Features", "Preamble", "Citizenship", "Fundamental Rights", "DPSP", "Fundamental Duties", "Union Executive", "Parliament", "Judiciary", "Federal System", "Emergency Provisions", "Constitutional Bodies", "Non-Constitutional Bodies", "Local Government", "Governance & Policies"
+                ]
+            },
+            "HISTORY": {
+                "Ancient": ["Prehistoric Period", "Stone Age", "Chalcolithic Age", "Iron Age", "Indus Valley Civilization", "Vedic Age", "Mahajanapadas", "Buddhism & Jainism", "Mauryan Empire", "Post-Mauryan Period", "Gupta Empire", "Sangam Age"],
+                "Medieval": ["Early Medieval India", "Delhi Sultanate", "Vijayanagara Empire", "Mughal Empire", "Marathas"],
+                "Modern": ["Advent of Europeans", "British Expansion", "Revolt of 1857", "Socio-Religious Reform Movements", "Indian National Movement", "Gandhian Phase", "Constitutional Developments", "Partition & Independence"],
+                "Post-Independence": ["Integration of States", "Reorganization of States", "Economic Development"],
+                "Art & Culture": ["Architecture", "Sculpture", "Paintings", "Literature", "Music & Dance", "Religion & Philosophy"]
+            },
+            "GEOGRAPHY": {
+                "Physical Geography": ["Origin of Earth", "Evolution of Earth", "Geological Time Scale", "Interior of Earth", "Minerals", "Rocks", "Earthquakes", "Volcanoes", "Tsunami", "Geomorphic Processes", "Landforms", "Continental Drift & Plate Tectonics"],
+                "Climatology": ["Atmosphere Structure", "Insolation & Heat Budget", "Temperature Distribution", "Pressure & Winds", "Jet Streams", "Cyclones", "ENSO", "Monsoon"],
+                "Oceanography": ["Ocean Relief", "Temperature & Salinity", "Ocean Currents", "Tides & Waves", "Marine Resources"],
+                "Indian Geography": ["Physiography", "Drainage System", "Climate", "Monsoon", "Soil", "Natural Vegetation", "Agriculture"],
+                "World Geography": ["Landforms", "Climate Regions", "Resources"]
+            },
+            "ECONOMY": {
+                "Units": ["Basic Concepts", "National Income", "Inflation", "Banking", "Monetary Policy", "Fiscal Policy", "Budget", "External Sector", "Agriculture", "Industry", "Infrastructure", "Economic Reforms"]
+            },
+            "ENVIRONMENT": {
+                "Units": ["Ecology", "Ecosystem", "Biodiversity", "Climate Change", "Pollution", "Conservation", "Environmental Conventions"]
+            },
+            "SCIENCE & TECH": {
+                "Units": ["Physics Basics", "Chemistry Basics", "Biology Basics", "Space Tech", "Defence Tech", "Biotechnology", "IT & AI"]
+            },
+            "CURRENT AFFAIRS": {
+                "Units": ["Polity CA", "Economy CA", "Geography CA", "Environment CA", "Science CA", "Government Schemes", "Reports & Indices", "International Relations"]
+            }
+        };
+
+        const MAINS_SYLLABUS = {
+            "GS1": {
+                "History & Culture": [
+                    "Indian culture – salient aspects of Art Forms, Literature and Architecture",
+                    "Modern Indian history (from about the middle of the eighteenth century until the present- significant events, personalities, issues)",
+                    "The Freedom Struggle — its various stages and important contributors/contributions from different parts of the country",
+                    "Post-independence consolidation and reorganization within the country",
+                    "History of the world will include events from 18th century such as industrial revolution, world wars, redrawal of national boundaries, colonization, decolonization, political philosophies like communism, capitalism, socialism etc."
+                ],
+                "Indian Society": [
+                    "Salient features of Indian Society, Diversity of India",
+                    "Role of women and women’s organization",
+                    "Population and associated issues",
+                    "Poverty and developmental issues",
+                    "Urbanization, their problems and their remedies",
+                    "Effects of globalization on Indian society",
+                    "Social empowerment, communalism, regionalism & secularism"
+                ],
+                "Geography": [
+                    "Salient features of world’s physical geography",
+                    "Distribution of key natural resources across the world (including South Asia and the Indian sub-continent)",
+                    "Factors responsible for the location of primary, secondary, and tertiary sector industries in various parts of the world (including India)",
+                    "Important geophysical phenomena such as earthquakes, Tsunami, Volcanic activity, cyclone etc., geographical features and their location, changes in critical geographical features (including water-bodies and ice-caps) and in flora and fauna and the effects of such changes"
+                ]
+            },
+            "GS2": {
+                "Constitution & Polity": [
+                    "Indian Constitution — historical underpinnings, evolution, features, amendments, significant provisions and basic structure",
+                    "Functions and responsibilities of the Union and the States, issues and challenges pertaining to the federal structure, devolution of powers and finances up to local levels and challenges therein",
+                    "Separation of powers between various organs, dispute redressal mechanisms and institutions",
+                    "Comparison of the Indian constitutional scheme with that of other countries",
+                    "Parliament and State legislatures — structure, functioning, conduct of business, powers & privileges and issues arising out of these",
+                    "Structure, organization and functioning of the Executive and the Judiciary — Ministries and Departments of the Government; pressure groups and formal/informal associations and their role in the polity",
+                    "Salient features of the Representation of People’s Act",
+                    "Appointment to various Constitutional posts, powers, functions and responsibilities of various Constitutional Bodies",
+                    "Statutory, regulatory and various quasi-judicial bodies"
+                ],
+                "Social Justice": [
+                    "Government policies and interventions for development in various sectors and issues arising out of their design and implementation",
+                    "Development processes and the development industry — the role of NGOs, SHGs, various groups and associations, donors, charities, institutional and other stakeholders",
+                    "Welfare schemes for vulnerable sections of the population by the Centre and States and the performance of these schemes",
+                    "Issues relating to development and management of Social Sector/Services relating to Health, Education, Human Resources",
+                    "Issues relating to poverty and hunger"
+                ],
+                "Governance": [
+                    "Important aspects of governance, transparency and accountability, e-governance — applications, models, successes, limitations, and potential; citizens charters, transparency & accountability and institutional and other measures",
+                    "Role of civil services in a democracy"
+                ],
+                "International Relations": [
+                    "India and its neighbourhood- relations",
+                    "Bilateral, regional and global groupings and agreements involving India and/or affecting India’s interests",
+                    "Effect of policies and politics of developed and developing countries on India’s interests, Indian diaspora",
+                    "Important International institutions, agencies and fora — their structure, mandate"
+                ]
+            },
+            "GS3": {
+                "Economy": [
+                    "Indian Economy and issues relating to planning, mobilization, of resources, growth, development and employment",
+                    "Inclusive growth and issues arising from it",
+                    "Government Budgeting",
+                    "Major crops — cropping patterns in various parts of the country, different types of irrigation and irrigation systems, storage, transport and marketing of agricultural produce and issues and related constraints",
+                    "Food processing and related industries in India — scope and significance, location, upstream and downstream requirements, supply chain management",
+                    "Land reforms in India",
+                    "Effects of liberalization on the economy, changes in industrial policy and their effects on industrial growth",
+                    "Infrastructure: Energy, Ports, Roads, Airports, Railways etc.",
+                    "Investment models"
+                ],
+                "Science & Tech": [
+                    "Science and Technology — developments and their applications and effects in everyday life",
+                    "Achievements of Indians in science & technology; indigenization of technology and developing new technology",
+                    "Awareness in the fields of IT, Space, Computers, robotics, nano-technology, bio-technology and issues relating to intellectual property rights"
+                ],
+                "Environment & Disaster": [
+                    "Conservation, environmental pollution and degradation, environmental impact assessment",
+                    "Disaster and disaster management"
+                ],
+                "Security": [
+                    "Linkages between development and spread of extremism",
+                    "Role of external state and non-state actors in creating challenges to internal security",
+                    "Challenges to internal security through communication networks, role of media and social networking sites in internal security challenges",
+                    "Basics of cyber security; money-laundering and its prevention",
+                    "Security challenges and their management in border areas — linkages of organized crime with terrorism",
+                    "Various Security forces and agencies and their mandate"
+                ]
+            },
+            "GS4": {
+                "Ethics Theory": [
+                    "Ethics and Human Interface: Essence, determinants and consequences of Ethics in human actions; dimensions of ethics; ethics in private and public relationships",
+                    "Human Values — lessons from the lives and teachings of great leaders, reformers and administrators",
+                    "Role of family, society and educational institutions in inculcating values",
+                    "Attitude: content, structure, function; its influence and relation with thought and behaviour; moral and political attitudes; social influence and persuasion",
+                    "Aptitude and foundational values for Civil Service — integrity, impartiality and non-partisanship, objectivity, dedication to public service, empathy, tolerance and compassion towards the weaker sections",
+                    "Emotional intelligence — concepts, and their utilities and application in administration and governance",
+                    "Contributions of moral thinkers and philosophers from India and world"
+                ],
+                "Public Service Ethics": [
+                    "Public/Civil service values and Ethics in Public administration: Status and problems; ethical concerns and dilemmas in government and private institutions; laws, rules, regulations and conscience as sources of ethical guidance; accountability and ethical governance; strengthening of ethical and moral values in governance; ethical issues in international relations and funding; corporate governance",
+                    "Probity in Governance: Concept of public service; philosophical basis of governance and probity; information sharing and transparency in government; Right to Information; Codes of Ethics; Codes of Conduct; Citizen’s Charters; Work culture; Quality of service delivery; Utilization of public funds; challenges of corruption"
+                ],
+                "Applied Ethics": [
+                    "Case Studies on above issues"
+                ]
+            }
+        };
+
+        // ================= TRACKER LOGIC =================
+
+        let trackerMainMode = localStorage.getItem('upsc_tracker_main_mode') || 'prelims';
+        let trackerMode = localStorage.getItem('upsc_tracker_mode') || 'standard';
+        let trackerViewState = 'subject';
+        let progressData = JSON.parse(localStorage.getItem('upsc_tracker_progress_v4')) || {};
+        let activeSubject = 'POLITY';
+        let subjectChart = null;
+        let overallChart = null;
+        let recentActivity = JSON.parse(localStorage.getItem('upsc_tracker_recent_v4')) || [];
+
+        window.initTracker = () => {
+            const userName = localStorage.getItem('upsc_vault_user_name') || '';
+            document.getElementById('userNameInput').value = userName;
+            setTrackerMainMode(trackerMainMode);
+            renderRecentActivity();
+        };
+
+        window.saveUserName = (name) => {
+            localStorage.setItem('upsc_vault_user_name', name);
+        };
+
+        window.setTrackerMainMode = (mode) => {
+            trackerMainMode = mode;
+            localStorage.setItem('upsc_tracker_main_mode', mode);
+            
+            const pBtn = document.getElementById('mode-prelims');
+            const mBtn = document.getElementById('mode-mains');
+            const modeSubToggles = document.getElementById('modeSubToggles');
+
+            if (mode === 'prelims') {
+                pBtn.className = "px-10 py-5 rounded-3xl border-2 border-[#2d3a3a] bg-[#2d3a3a] text-white text-lg font-bold transition shadow-lg shadow-gray-200";
+                mBtn.className = "px-10 py-5 rounded-3xl border-2 border-gray-100 text-gray-400 text-lg font-bold hover:bg-gray-50 transition shadow-sm";
+                modeSubToggles.classList.remove('hidden');
+                activeSubject = Object.keys(STANDARD_SYLLABUS)[0];
+                setTrackerType(trackerMode);
+            } else {
+                mBtn.className = "px-10 py-5 rounded-3xl border-2 border-[#2d3a3a] bg-[#2d3a3a] text-white text-lg font-bold transition shadow-lg shadow-gray-200";
+                pBtn.className = "px-10 py-5 rounded-3xl border-2 border-gray-100 text-gray-400 text-lg font-bold hover:bg-gray-50 transition shadow-sm";
+                modeSubToggles.classList.add('hidden');
+                activeSubject = 'GS1';
+                document.getElementById('modeDescription').innerText = "Full UPSC Mains Subject Tracking";
+                renderTrackerSubjects();
+                setTrackerSubject(activeSubject);
+            }
+        };
+
+        window.setTrackerType = (type) => {
+            trackerMode = type;
+            localStorage.setItem('upsc_tracker_mode', type);
+            const stdBtn = document.getElementById('type-standard');
+            const micBtn = document.getElementById('type-micro');
+            if(type === 'standard') {
+                stdBtn.className = "px-6 py-3 rounded-2xl bg-[#f8f6f1] text-[#2d3a3a] text-sm font-bold border-2 border-transparent transition hover:border-[#8a795d]";
+                micBtn.className = "px-6 py-3 rounded-2xl bg-white text-gray-400 text-sm font-bold border-2 border-gray-100 transition hover:bg-gray-50";
+                document.getElementById('modeDescription').innerText = "Official UPSC syllabus mode";
+            } else {
+                micBtn.className = "px-6 py-3 rounded-2xl bg-[#f8f6f1] text-[#2d3a3a] text-sm font-bold border-2 border-transparent transition hover:border-[#8a795d]";
+                stdBtn.className = "px-6 py-3 rounded-2xl bg-white text-gray-400 text-sm font-bold border-2 border-gray-100 transition hover:bg-gray-50";
+                document.getElementById('modeDescription').innerText = "Deep hierarchical micro-syllabus tracker";
+            }
+            renderTrackerSubjects();
+            setTrackerSubject(activeSubject);
+        };
+
+        window.setTrackerView = (view) => {
+            trackerViewState = view;
+            ['subject', 'summary', 'overall'].forEach(v => {
+                const el = document.getElementById(`tracker-view-${v}`);
+                const btn = document.getElementById(`view-${v}`);
+                if(v === view) {
+                    el.classList.remove('hidden');
+                    btn.className = "px-5 py-2 rounded-xl bg-white shadow-sm text-[11px] font-bold text-[#2d3a3a] transition";
+                } else {
+                    el.classList.add('hidden');
+                    btn.className = "px-5 py-2 rounded-xl text-[11px] font-bold text-gray-400 transition hover:text-[#2d3a3a]";
+                }
+            });
+            if(view === 'summary') renderProgressSummary();
+            if(view === 'overall') updateOverallStats();
+        };
+
+        function renderTrackerSubjects() {
+            const list = document.getElementById('trackerSubjectList');
+            let source;
+            if (trackerMainMode === 'mains') {
+                source = MAINS_SYLLABUS;
+            } else {
+                source = trackerMode === 'standard' ? STANDARD_SYLLABUS : MICRO_SYLLABUS;
+            }
+
+            list.innerHTML = Object.keys(source).map(sub => {
+                const stats = getSubjectStats(sub);
+                return `
+                    <button onclick="setTrackerSubject('${sub}')" class="tracker-subject-card w-full p-4 rounded-2xl border bg-white flex justify-between items-center transition ${activeSubject === sub ? 'active border-[#8a795d]' : 'border-gray-100'}">
+                        <div class="text-left">
+                            <div class="text-xs font-bold text-[#2d3a3a]">${sub}</div>
+                            <div class="text-[10px] text-gray-400 mt-1">${stats.completed}/${stats.total} Topics</div>
+                        </div>
+                        <div class="text-xs font-bold text-[#8a795d]">${stats.percent}%</div>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        window.setTrackerSubject = (sub) => {
+            activeSubject = sub;
+            document.getElementById('activeSubjectTitle').innerText = sub;
+            renderTrackerSubjects();
+            renderTopicChecklist();
+            updateSubjectView();
+        };
+
+        function getSubjectStats(sub) {
+            const modeKey = trackerMainMode === 'mains' ? 'mains' : trackerMode;
+            const data = progressData[modeKey] ? progressData[modeKey][sub] || [] : [];
+            let total = 0;
+            
+            if (trackerMainMode === 'mains') {
+                for (let key in MAINS_SYLLABUS[sub]) total += MAINS_SYLLABUS[sub][key].length;
+            } else if (trackerMode === 'standard') {
+                total = STANDARD_SYLLABUS[sub].length;
+            } else {
+                for (let key in MICRO_SYLLABUS[sub]) total += MICRO_SYLLABUS[sub][key].length;
+            }
+            
+            const completed = data.length;
+            const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+            return { completed, total, percent };
+        }
+
+        function renderTopicChecklist() {
+            const container = document.getElementById('topicChecklist');
+            const modeKey = trackerMainMode === 'mains' ? 'mains' : trackerMode;
+            const completed = progressData[modeKey] ? progressData[modeKey][activeSubject] || [] : [];
+            
+            if (trackerMainMode === 'mains') {
+                const source = MAINS_SYLLABUS[activeSubject];
+                let html = '';
+                for(let key in source) {
+                    const path = `${activeSubject}.${key}`;
+                    const isParentChecked = source[key].every(t => completed.includes(`${path}.${t}`));
+                    html += `
+                        <div class="flex items-center gap-3 p-3 bg-gray-50/50 rounded-xl mb-1">
+                            <input type="checkbox" class="custom-checkbox" ${isParentChecked ? 'checked' : ''} onchange="toggleTrackerItemParent('${activeSubject}', '${key}', ${isParentChecked})">
+                            <span class="text-xs font-bold uppercase tracking-wider text-gray-500">${key}</span>
+                        </div>
+                    `;
+                    html += source[key].map(topic => renderCheckboxItem(topic, completed.includes(`${path}.${topic}`), 1, `${path}.${topic}`)).join('');
+                }
+                container.innerHTML = html;
+            } else if (trackerMode === 'standard') {
+                const source = STANDARD_SYLLABUS[activeSubject];
+                container.innerHTML = source.map(topic => renderCheckboxItem(topic, completed.includes(topic), 0, topic)).join('');
+            } else {
+                const source = MICRO_SYLLABUS[activeSubject];
+                let html = '';
+                for(let key in source) {
+                    const path = `${activeSubject}.${key}`;
+                    const isParentChecked = source[key].every(t => completed.includes(`${path}.${t}`));
+                    html += `
+                        <div class="flex items-center gap-3 p-3 bg-gray-50/50 rounded-xl mb-1">
+                            <input type="checkbox" class="custom-checkbox" ${isParentChecked ? 'checked' : ''} onchange="toggleTrackerItemParent('${activeSubject}', '${key}', ${isParentChecked})">
+                            <span class="text-xs font-bold uppercase tracking-wider text-gray-500">${key}</span>
+                        </div>
+                    `;
+                    html += source[key].map(topic => renderCheckboxItem(topic, completed.includes(`${path}.${topic}`), 1, `${path}.${topic}`)).join('');
+                }
+                container.innerHTML = html;
+            }
+        }
+
+        function renderCheckboxItem(label, isChecked, level, fullPath) {
+            return `
+                <div class="flex items-start gap-3 p-3 micro-topic-item" style="margin-left: ${level * 16}px">
+                    <input type="checkbox" class="custom-checkbox mt-0.5" ${isChecked ? 'checked' : ''} onchange="toggleTrackerItem('${activeSubject}', '${fullPath}')">
+                    <span class="text-xs font-medium text-[#2d3a3a] leading-relaxed">${label}</span>
+                </div>
+            `;
+        }
+
+        window.toggleTrackerItem = (sub, path) => {
+            const modeKey = trackerMainMode === 'mains' ? 'mains' : trackerMode;
+            if(!progressData[modeKey]) progressData[modeKey] = {};
+            if(!progressData[modeKey][sub]) progressData[modeKey][sub] = [];
+            const list = progressData[modeKey][sub];
+            const idx = list.indexOf(path);
+            if(idx > -1) {
+                list.splice(idx, 1);
+            } else {
+                list.push(path);
+                addToRecent(path);
+            }
+            saveAndRefresh();
+        };
+
+        window.toggleTrackerItemParent = (sub, parentKey, currentAllChecked) => {
+            const modeKey = trackerMainMode === 'mains' ? 'mains' : trackerMode;
+            if(!progressData[modeKey]) progressData[modeKey] = {};
+            if(!progressData[modeKey][sub]) progressData[modeKey][sub] = [];
+            const list = progressData[modeKey][sub];
+            
+            const sourceMap = trackerMainMode === 'mains' ? MAINS_SYLLABUS : MICRO_SYLLABUS;
+            const children = sourceMap[sub][parentKey];
+            const pathPrefix = `${sub}.${parentKey}.`;
+            
+            if(currentAllChecked) {
+                children.forEach(t => {
+                    const idx = list.indexOf(pathPrefix + t);
+                    if(idx > -1) list.splice(idx, 1);
+                });
+            } else {
+                children.forEach(t => {
+                    const fullPath = pathPrefix + t;
+                    if(!list.includes(fullPath)) list.push(fullPath);
+                });
+                addToRecent(parentKey + " (All Section)");
+            }
+            saveAndRefresh();
+        };
+
+        function saveAndRefresh() {
+            localStorage.setItem('upsc_tracker_progress_v4', JSON.stringify(progressData));
+            updateSubjectView();
+            renderTrackerSubjects();
+            renderTopicChecklist();
+        }
+
+        function addToRecent(label) {
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            recentActivity.unshift({ label: label.split('.').pop(), time });
+            recentActivity = recentActivity.slice(0, 5);
+            localStorage.setItem('upsc_tracker_recent_v4', JSON.stringify(recentActivity));
+            renderRecentActivity();
+        }
+
+        function renderRecentActivity() {
+            const list = document.getElementById('recentActivityList');
+            if(!list) return;
+            if(recentActivity.length === 0) { list.innerHTML = '<p class="text-[10px] text-gray-300 italic">No progress recorded.</p>'; return; }
+            list.innerHTML = recentActivity.map(act => `
+                <div class="p-2 bg-gray-50 rounded-lg flex items-center justify-between gap-2">
+                    <span class="text-[10px] font-medium text-gray-500 truncate">${act.label}</span>
+                    <span class="text-[8px] text-gray-300 shrink-0">${act.time}</span>
+                </div>
+            `).join('');
+        }
+
+        function updateSubjectView() {
+            const stats = getSubjectStats(activeSubject);
+            document.getElementById('subjectPercentage').innerText = `${stats.percent}%`;
+            document.getElementById('progressBarText').innerText = `${stats.completed}/${stats.total} Topics`;
+            document.getElementById('subjectProgressBar').style.width = `${stats.percent}%`;
+
+            const badge = document.getElementById('motivationBadge');
+            const note = document.getElementById('subjectSmartNote');
+            if(stats.percent >= 70) {
+                badge.className = "inline-block px-2 py-0.5 bg-green-100 text-green-600 text-[9px] font-bold rounded mb-2";
+                badge.innerText = "🔥 EXCELLENT";
+                note.innerText = "Mastery level achieved. Keep revising these core concepts.";
+            } else if(stats.percent >= 40) {
+                badge.className = "inline-block px-2 py-0.5 bg-yellow-100 text-yellow-600 text-[9px] font-bold rounded mb-2";
+                badge.innerText = "⚡ KEEP GOING";
+                note.innerText = "Significant coverage. Maintain consistency to cross the 70% threshold.";
+            } else {
+                badge.className = "inline-block px-2 py-0.5 bg-red-100 text-red-500 text-[9px] font-bold rounded mb-2";
+                badge.innerText = "⚠️ FOCUS NEEDED";
+                note.innerText = "Early stages. Structured daily study is required for this subject.";
+            }
+
+            if(subjectChart) subjectChart.destroy();
+            const ctx = document.getElementById('subjectDoughnut').getContext('2d');
+            subjectChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completed', 'Remaining'],
+                    datasets: [{
+                        data: [stats.completed, stats.total - stats.completed],
+                        backgroundColor: ['#8a795d', '#f3f4f6'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { cutout: '80%', plugins: { legend: { display: false } }, animation: { duration: 1000 } }
+            });
+        }
+
+        function renderProgressSummary() {
+            const container = document.getElementById('tracker-view-summary');
+            let source;
+            if (trackerMainMode === 'mains') {
+                source = MAINS_SYLLABUS;
+            } else {
+                source = trackerMode === 'standard' ? STANDARD_SYLLABUS : MICRO_SYLLABUS;
+            }
+
+            container.innerHTML = Object.keys(source).map(sub => {
+                const stats = getSubjectStats(sub);
+                return `
+                    <div class="card-premium p-6 rounded-3xl group">
+                        <div class="text-[10px] font-bold text-gray-300 uppercase mb-2 group-hover:text-[#8a795d] transition">${sub}</div>
+                        <div class="flex justify-between items-end mb-4">
+                            <div class="text-2xl font-bold text-[#2d3a3a]">${stats.percent}%</div>
+                            <div class="text-[10px] font-bold text-[#8a795d]">${stats.completed}/${stats.total}</div>
+                        </div>
+                        <div class="h-1.5 w-full bg-gray-50 rounded-full overflow-hidden">
+                            <div class="h-full bg-[#8a795d] transition-all duration-1000" style="width: ${stats.percent}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateOverallStats() {
+            let source;
+            if (trackerMainMode === 'mains') {
+                source = MAINS_SYLLABUS;
+            } else {
+                source = trackerMode === 'standard' ? STANDARD_SYLLABUS : MICRO_SYLLABUS;
+            }
+
+            let total = 0, completed = 0;
+            Object.keys(source).forEach(sub => {
+                const stats = getSubjectStats(sub);
+                total += stats.total;
+                completed += stats.completed;
+            });
+            const avg = total > 0 ? Math.round((completed / total) * 100) : 0;
+            document.getElementById('overallTotalTopics').innerText = total;
+            document.getElementById('overallCompletedTopics').innerText = completed;
+            document.getElementById('overallAvgPercent').innerText = `${avg}%`;
+
+            if(overallChart) overallChart.destroy();
+            const ctx = document.getElementById('overallDoughnut').getContext('2d');
+            overallChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Overall Completion', 'Remaining'],
+                    datasets: [{
+                        data: [completed, total - completed],
+                        backgroundColor: ['#8a795d', '#2d3a3a'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { cutout: '85%', plugins: { legend: { display: false } } }
+            });
+        }
+
+        window.confirmResetTracker = () => {
+            if(confirm("Confirm: This will permanently wipe all your progress data across all subjects and modes.")) {
+                progressData = {};
+                recentActivity = [];
+                localStorage.removeItem('upsc_tracker_progress_v4');
+                localStorage.removeItem('upsc_tracker_recent_v4');
+                saveAndRefresh();
+                renderRecentActivity();
+            }
+        };
+
+        window.confirmResetSubject = () => {
+            if(confirm(`Reset all data for ${activeSubject}?`)) {
+                const modeKey = trackerMainMode === 'mains' ? 'mains' : trackerMode;
+                if(progressData[modeKey]) progressData[modeKey][activeSubject] = [];
+                saveAndRefresh();
+            }
+        };
+
+        // ================= OPTIMIZED PDF LOGIC (SECTION-WISE & FAST) =================
+
+        async function generateCanvasForHtml(html) {
+            const tempDiv = document.createElement('div');
+            tempDiv.style.position = 'absolute';
+            tempDiv.style.left = '-9999px';
+            tempDiv.style.width = '800px';
+            tempDiv.style.background = 'white';
+            tempDiv.innerHTML = html;
+            document.body.appendChild(tempDiv);
+            
+            const canvas = await html2canvas(tempDiv, { 
+                scale: 1.2, // OPTIMIZED SCALE
+                backgroundColor: '#ffffff',
+                logging: false,
+                useCORS: true
+            });
+            
+            document.body.removeChild(tempDiv);
+            return canvas;
+        }
+
+        window.downloadFullReport = async () => {
+            const btn = document.getElementById('pdfBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Generating PDF...';
+            btn.disabled = true;
+
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const margin = 15;
+            let currentY = margin;
+
+            const name = document.getElementById('userNameInput').value || 'Candidate';
+            const date = new Date().toLocaleDateString('en-GB');
+            const modeKey = trackerMainMode === 'mains' ? 'mains' : trackerMode;
+            const source = (trackerMainMode === 'mains') ? MAINS_SYLLABUS : (trackerMode === 'standard' ? STANDARD_SYLLABUS : MICRO_SYLLABUS);
+
+            // Calc Overall Stats
+            let totalAll = 0, completedAll = 0;
+            Object.keys(source).forEach(sub => {
+                const s = getSubjectStats(sub);
+                totalAll += s.total;
+                completedAll += s.completed;
+            });
+            const avgAll = totalAll > 0 ? Math.round((completedAll / totalAll) * 100) : 0;
+
+            try {
+                // SECTION 1: HEADER & OVERALL SUMMARY
+                const headerHtml = `
+                    <div style="padding: 40px; font-family: sans-serif; border-bottom: 2px solid #2d3a3a; margin-bottom: 30px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h1 style="margin: 0; color: #2d3a3a; font-size: 24pt;">UPSC Vault Report</h1>
+                                <p style="margin: 5px 0; color: #8a795d; font-weight: bold; text-transform: uppercase; font-size: 10pt;">${trackerMainMode.toUpperCase()} | ${modeKey.toUpperCase()} Mode</p>
+                            </div>
+                            <div style="text-align: right;">
+                                <p style="margin: 0; font-weight: bold; font-size: 12pt;">${name}</p>
+                                <p style="margin: 0; font-size: 9pt; color: #666;">${date}</p>
+                            </div>
+                        </div>
+                        <div style="margin-top: 30px; background: #2d3a3a; color: white; padding: 25px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <p style="margin: 0; font-size: 10pt; opacity: 0.7;">TOTAL SYLLABUS COVERAGE</p>
+                                <div style="font-size: 36pt; font-weight: 800; color: #8a795d;">${avgAll}%</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <p style="margin: 0; font-size: 10pt;"><strong>Completed:</strong> ${completedAll}</p>
+                                <p style="margin: 0; font-size: 10pt;"><strong>Total Units:</strong> ${totalAll}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                const headerCanvas = await generateCanvasForHtml(headerHtml);
+                const headerImg = headerCanvas.toDataURL('image/jpeg', 0.85); // COMPRESSED QUALITY
+                const headerHeightMm = (headerCanvas.height * (pageWidth - 2 * margin)) / headerCanvas.width;
+                
+                pdf.addImage(headerImg, 'JPEG', margin, currentY, (pageWidth - 2 * margin), headerHeightMm);
+                currentY += headerHeightMm + 10;
+
+                // SECTION 2: SUBJECT BLOCKS (CLEAN BREAKS)
+                const subjects = Object.keys(source);
+                for (let i = 0; i < subjects.length; i++) {
+                    const sub = subjects[i];
+                    
+                    const stats = getSubjectStats(sub);
+                    const currentModeData = progressData[modeKey] || {};
+                    const completedList = currentModeData[sub] || [];
+
+                    let subHtml = `
+                        <div style="padding: 20px; font-family: sans-serif; border: 1px solid #eee; border-radius: 12px; margin-bottom: 20px; background: #fdfdfc;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">
+                                <h2 style="margin: 0; font-size: 16pt; color: #2d3a3a;">${sub} Mastery</h2>
+                                <span style="font-weight: 800; color: #8a795d; font-size: 14pt;">${stats.percent}%</span>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    `;
+
+                    if (trackerMainMode === 'mains' || trackerMode === 'micro') {
+                        for(let key in source[sub]) {
+                            subHtml += `
+                                <div style="grid-column: span 2; font-weight: bold; font-size: 9pt; margin-top: 5px; color: #8a795d; text-transform: uppercase;">${key}</div>
+                            `;
+                            source[sub][key].forEach(topic => {
+                                const path = `${sub}.${key}.${topic}`;
+                                const isDone = completedList.includes(path);
+                                subHtml += `
+                                    <div style="font-size: 8.5pt; color: ${isDone ? '#2d3a3a' : '#aaa'}; display: flex; gap: 5px;">
+                                        <span>${isDone ? '■' : '□'}</span>
+                                        <span style="flex:1">${topic}</span>
+                                    </div>
+                                `;
+                            });
+                        }
+                    } else {
+                        source[sub].forEach(topic => {
+                            const isDone = completedList.includes(topic);
+                            subHtml += `
+                                <div style="font-size: 9pt; color: ${isDone ? '#2d3a3a' : '#aaa'}; display: flex; gap: 5px;">
+                                    <span>${isDone ? '■' : '□'}</span>
+                                    <span style="flex:1">${topic}</span>
+                                </div>
+                            `;
+                        });
+                    }
+                    subHtml += `</div></div>`;
+
+                    const subCanvas = await generateCanvasForHtml(subHtml);
+                    const subImg = subCanvas.toDataURL('image/jpeg', 0.85);
+                    const subHeightMm = (subCanvas.height * (pageWidth - 2 * margin)) / subCanvas.width;
+
+                    // CHECK PAGE SPACE - PREVENT CUTTING
+                    if (currentY + subHeightMm > pageHeight - margin) {
+                        pdf.addPage();
+                        currentY = margin;
+                    }
+
+                    pdf.addImage(subImg, 'JPEG', margin, currentY, (pageWidth - 2 * margin), subHeightMm);
+                    currentY += subHeightMm + 8; // Small gap between subjects
+                }
+
+                // FINAL FOOTER
+                const footerHtml = `<div style="text-align: center; color: #aaa; font-size: 9pt; padding: 15px;">© UPSC Vault • Smart Preparation Repository • All Subjects Comprehensive Report</div>`;
+                const footerCanvas = await generateCanvasForHtml(footerHtml);
+                const footerImg = footerCanvas.toDataURL('image/jpeg', 0.8);
+                const footerHeightMm = (footerCanvas.height * (pageWidth - 2 * margin)) / footerCanvas.width;
+
+                if (currentY + footerHeightMm > pageHeight - margin) {
+                    pdf.addPage();
+                    currentY = margin;
+                }
+                pdf.addImage(footerImg, 'JPEG', margin, currentY, (pageWidth - 2 * margin), footerHeightMm);
+
+                pdf.save(`UPSC_Vault_Full_Report_${name.replace(/\s+/g, '_')}_${date}.pdf`);
+            } catch (err) {
+                console.error("PDF generation error:", err);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        };
+
+        // ================= BASE REPOSITORY LOGIC (LOCAL STORAGE MODE) =================
+
+        function init() {
+            loadLocalData();
+            renderFilterButtons();
+        }
+
+        async function loadLocalData() {
+    try {
+        const res = await fetch('data.json');
+        const jsonData = await res.json();
+
+        // FIX: ensure required fields exist
+        cloudItems = jsonData.map(item => ({
+            institute: "General",
+            year: "2025",
+            ...item
+        }));
+
+        console.log("📦 JSON Loaded:", cloudItems.length);
+        applyFilters();
+    } catch (err) {
+        console.error("❌ JSON error:", err);
+        applyFilters();
+    }
+}
+
+        function renderFilterButtons() {
+            const subjContainer = document.getElementById('subjectFilters');
+            if(subjContainer) subjContainer.innerHTML = subjects.map(s => `
+                <button onclick="setFilter('subject', '${s}')" class="filter-btn-subj px-6 py-2 rounded-full border border-gray-100 bg-white text-xs font-bold transition ${s === 'All' ? 'filter-active' : ''}">${s}</button>
+            `).join('');
+            const instContainer = document.getElementById('instituteFilters');
+            if(instContainer) instContainer.innerHTML = commonInstitutes.map(i => `
+                <button onclick="setFilter('institute', '${i}')" class="filter-btn-inst px-4 py-1 rounded-full border border-gray-100 bg-white text-[10px] font-bold text-gray-400 transition ${i === 'All' ? 'filter-active' : ''}">${i}</button>
+            `).join('');
+        }
+
+        window.setFilter = (type, value) => {
+            if (type === 'subject') {
+                currentSubject = value;
+                document.querySelectorAll('.filter-btn-subj').forEach(b => b.classList.toggle('filter-active', b.innerText === value));
+            } else {
+                currentInstitute = value;
+                document.querySelectorAll('.filter-btn-inst').forEach(b => b.classList.toggle('filter-active', b.innerText === value));
+            }
+            applyFilters();
+        };
+
+        function applyFilters() {
+            filteredItems = allItems.filter(item => {
+                const matchesSubject = currentSubject === 'All' || item.subject === currentSubject || item.subject === 'All';
+                const matchesSearch = !searchTerm || item.title.toLowerCase().includes(searchTerm.toLowerCase());
+                return matchesSubject && matchesSearch;
+            });
+            renderGrids();
+        }
+
+        function renderGrids() {
+            const grids = { Book: document.getElementById('booksGrid'), Notes: document.getElementById('booksGrid'), Test: document.getElementById('testGrid'), Current: document.getElementById('currentAffairsGrid') };
+            Object.values(grids).forEach(g => { if(g) g.innerHTML = ''; });
+            let pyqBuckets = { prelimsYears: {}, prelimsTopics: ["Polity", "Economy", "History", "Geography", "Environment"], topicLinks: {}, mainsSubjects: ["GS1", "GS2", "GS3", "GS4"], mainsLinks: {} };
+
+            filteredItems.forEach(item => { 
+                if (grids[item.category]) grids[item.category].innerHTML += createCardHTML(item); 
+                else if (item.category === 'PYQ') {
+                    const titleLower = item.title.toLowerCase();
+                    const yearMatch = item.title.match(/\b(20\d{2})\b/);
+                    if (yearMatch) {
+                        const year = yearMatch[1];
+                        if (!pyqBuckets.prelimsYears[year]) pyqBuckets.prelimsYears[year] = { gs: null, csat: null };
+                        if (titleLower.includes('csat')) pyqBuckets.prelimsYears[year].csat = item;
+                        else pyqBuckets.prelimsYears[year].gs = item;
+                    }
+                    pyqBuckets.prelimsTopics.forEach(topic => {
+                        if (titleLower.includes(topic.toLowerCase())) {
+                            if (!pyqBuckets.topicLinks[topic]) pyqBuckets.topicLinks[topic] = [];
+                            pyqBuckets.topicLinks[topic].push(item);
+                        }
+                    });
+                    pyqBuckets.mainsSubjects.forEach(gs => { if (item.title.toUpperCase().includes(gs)) pyqBuckets.mainsLinks[gs] = item; });
+                }
+            });
+            renderPYQAccordionUI(pyqBuckets);
+            document.getElementById('emptyState').classList.toggle('hidden', filteredItems.length > 0);
+        }
+
+        function renderPYQAccordionUI(buckets) {
+            const container = document.getElementById('pyqAccordionContainer');
+            if(!container) return;
+            const years = Object.keys(buckets.prelimsYears).sort((a,b) => b-a);
+            let yearsHtml = years.map(year => `
+                <div class="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+                    <span class="text-sm font-bold text-[#2d3a3a]">${year}</span>
+                    <div class="flex gap-2">
+                        ${buckets.prelimsYears[year].gs ? `<a href="${buckets.prelimsYears[year].gs.link}" target="_blank" class="text-[10px] font-bold px-3 py-1 bg-gray-50 rounded-lg hover:bg-[#2d3a3a] hover:text-white transition">GS PAPER 1</a>` : `<span class="text-[10px] text-gray-300 px-3 py-1 border border-dashed rounded-lg cursor-help">Add GS</span>`}
+                        ${buckets.prelimsYears[year].csat ? `<a href="${buckets.prelimsYears[year].csat.link}" target="_blank" class="text-[10px] font-bold px-3 py-1 bg-gray-50 rounded-lg hover:bg-[#2d3a3a] hover:text-white transition">CSAT</a>` : `<span class="text-[10px] text-gray-300 px-3 py-1 border border-dashed rounded-lg cursor-help">Add CSAT</span>`}
+                    </div>
+                </div>`).join('');
+
+            let topicsHtml = buckets.prelimsTopics.map(topic => {
+                const item = buckets.topicLinks[topic]?.[0];
+                return item ? `<a href="${item.link}" target="_blank" class="flex items-center justify-between p-3 bg-gray-50 rounded-xl hover:bg-white border border-transparent hover:border-[#8a795d] transition mb-2">
+                        <span class="text-xs font-medium">${topic} Analysis</span>
+                        <i class="fas fa-external-link-alt text-[9px] text-gray-300"></i>
+                    </a>` : `<div class="p-3 border border-dashed border-gray-100 rounded-xl opacity-40 mb-2"><span class="text-xs">${topic} (Soon)</span></div>`;
+            }).join('');
+
+            let mainsHtml = buckets.mainsSubjects.map(gs => {
+                const item = buckets.mainsLinks[gs];
+                return `<a href="${item ? item.link : '#'}" target="_blank" class="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl hover:bg-white border border-transparent hover:border-[#2d3a3a] transition ${!item ? 'opacity-40 grayscale' : ''}">
+                    <div class="w-8 h-8 rounded-xl bg-white border flex items-center justify-center text-[10px] font-bold text-[#8a795d]">${gs}</div>
+                    <div class="text-xs font-bold text-[#2d3a3a]">${gs} Compilations</div>
+                </a>`;
+            }).join('');
+
+            container.innerHTML = `
+                <div class="accordion-item bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm active">
+                    <button onclick="toggleAccordion('prelims-box')" class="w-full flex justify-between p-6 items-center">
+                        <div class="flex items-center gap-4 text-left">
+                            <div class="w-10 h-10 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center"><i class="fas fa-file-alt"></i></div>
+                            <div><h3 class="font-bold text-[#2d3a3a]">Prelims PYQs</h3><p class="text-xs text-gray-400">Archives</p></div>
+                        </div>
+                        <i class="fas fa-chevron-down chevron-icon transition-transform"></i>
+                    </button>
+                    <div id="prelims-box" class="accordion-content px-6 pb-6"><div class="grid md:grid-cols-2 gap-8 border-t pt-4"><div><h4 class="text-[9px] font-bold uppercase tracking-widest text-[#8a795d] mb-4">Years</h4>${yearsHtml || '<p class="text-xs text-gray-400">No years found</p>'}</div><div><h4 class="text-[9px] font-bold uppercase tracking-widest text-[#8a795d] mb-4">Topic-wise</h4>${topicsHtml}</div></div></div>
+                </div>
+                <div class="accordion-item bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm">
+                    <button onclick="toggleAccordion('mains-box')" class="w-full flex justify-between p-6 items-center">
+                        <div class="flex items-center gap-4 text-left">
+                            <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center"><i class="fas fa-pen-nib"></i></div>
+                            <div><h3 class="font-bold text-[#2d3a3a]">Mains PYQs</h3><p class="text-xs text-gray-400">GS1-GS4 Subject Archives</p></div>
+                        </div>
+                        <i class="fas fa-chevron-down chevron-icon transition-transform"></i>
+                    </button>
+                    <div id="mains-box" class="accordion-content px-6 pb-6">
+                        <div class="grid sm:grid-cols-2 gap-3 border-t pt-4">${mainsHtml}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createCardHTML(item) {
+            return `<div class="card-premium p-6 rounded-2xl group">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="tag-pill ${item.category === 'Test' ? 'bg-orange-50 text-orange-600' : (item.category === 'Current' ? 'bg-purple-50 text-purple-600' : 'bg-green-50 text-green-600')}">${item.type || item.category}</span>
+                    <span class="text-[9px] font-bold text-gray-300 uppercase">${item.subject}</span>
+                </div>
+                <h3 class="text-lg font-bold text-[#2d3a3a] mb-2 min-h-[48px] leading-snug">${item.title}</h3>
+                <p class="text-[11px] text-gray-400 mb-6 font-medium">${item.source}</p>
+                <div class="flex items-center gap-2">
+                    <a href="${item.link}" target="_blank" class="flex-grow inline-flex items-center justify-center gap-2 py-2.5 bg-gray-50 text-[#2d3a3a] text-xs font-bold rounded-xl hover:bg-[#8a795d] hover:text-white transition">Access Resource</a>
+                    ${!item.isDemo ? `<button onclick="deleteResource('${item.id}')" class="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-100 text-gray-300 hover:text-red-500 transition"><i class="far fa-trash-alt text-xs"></i></button>` : ''}
+                </div>
+            </div>`;
+        }
+
+        window.toggleAccordion = (id) => { document.getElementById(id).parentElement.classList.toggle('active'); };
+        window.toggleModal = (id) => { document.getElementById(id).classList.toggle('hidden'); };
+
+        const resourceForm = document.getElementById('resourceForm');
+        resourceForm.onsubmit = (e) => {
+            e.preventDefault();
+            const fd = new FormData(resourceForm);
+            
+            const newResource = {
+                id: crypto.randomUUID(),
+                title: fd.get('title'),
+                subject: fd.get('subject'),
+                category: fd.get('category'),
+                source: fd.get('source'),
+                link: fd.get('link'),
+                createdAt: new Date().toISOString(),
+                isDemo: false
+            };
+
+            const userItems = JSON.parse(localStorage.getItem('upsc_vault_user_resources')) || [];
+            userItems.push(newResource);
+            localStorage.setItem('upsc_vault_user_resources', JSON.stringify(userItems));
+
+            resourceForm.reset();
+            toggleModal('addModal');
+            loadLocalData();
+            showToast("Resource added locally!");
+        };
+
+        window.deleteResource = (id) => {
+            if (!confirm("Remove this resource from your library?")) return;
+            
+            let userItems = JSON.parse(localStorage.getItem('upsc_vault_user_resources')) || [];
+            userItems = userItems.filter(item => item.id !== id);
+            localStorage.setItem('upsc_vault_user_resources', JSON.stringify(userItems));
+            
+            loadLocalData();
+            showToast("Resource removed.");
+        };
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            toast.style.opacity = '1';
+            toast.style.transform = 'translate(-50%, 0)';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translate(-50%, 20px)';
+            }, 3000);
+        }
+
+        document.getElementById('mainSearch').addEventListener('input', (e) => { searchTerm = e.target.value; applyFilters(); });
+
+        init();
+    </script>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script src="https://unpkg.com/typewriter-effect@latest/dist/core.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true });
+        new Typewriter('#typewriter', { strings: ['Library.', 'Sanctuary.', 'Repository.', 'Vault.'], autoStart: true, loop: true });
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (nav) {
+                if (window.scrollY > 50) nav.classList.add('py-2', 'shadow-sm');
+                else nav.classList.remove('py-2', 'shadow-sm');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+[
+  {
+    "id": "1",
+    "title": "Indian Polity - Laxmikanth",
+    "subject": "Polity",
+    "type": "Standard Book",
+    "category": "file",
+    "link": "https://example.com"
+  },
+  {
+    "id": "2",
+    "title": "Spectrum Modern History",
+    "subject": "History",
+    "type": "Standard Book",
+    "category": "file",
+    "link": "https://example.com"
+  },
+  {
+    "id": "3",
+    "title": "Vision IAS Current Affairs",
+    "subject": "All",
+    "type": "Magazine",
+    "category": "file",
+    "link": "https://example.com"
+  },
+  {
+    "id": "4",
+    "title": "UPSC Test Series 2025",
+    "subject": "All",
+    "type": "Test Series",
+    "category": "folder",
+    "link": "https://example.com"
+  }
+]
